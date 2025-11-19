@@ -3,9 +3,7 @@ from vehicle_state import VehicleState, DriveMode
 
 
 class ModeSelector:
-    """
-    This is the brain of our system - it decides which mode to use
-    """
+    
     
     def __init__(self):
         # Battery limits
@@ -22,10 +20,7 @@ class ModeSelector:
         self.STEEP_DOWN = -3.0       # Steep downhill (degrees)
     
     def select_mode(self, state: VehicleState):
-        """
-        Look at the car's state and pick the best mode
-        We check things in order of priority
-        """
+        
         
         # First priority: braking? Use regen!
         if self._should_use_regen(state):
@@ -51,7 +46,7 @@ class ModeSelector:
         return DriveMode.HYBRID
     
     def _should_use_regen(self, state):
-        """Check if we should use regenerative braking"""
+        
         # We're braking and moving
         braking = state.brake_position > 10 and state.speed > 5
         # Or going downhill fast
@@ -62,7 +57,7 @@ class ModeSelector:
         return (braking or downhill) and battery_ok
     
     def _can_go_electric(self, state):
-        """Check if conditions are good for electric only"""
+        
         # Not too fast
         speed_ok = state.speed < self.EV_SPEED_LIMIT
         # Not pressing gas too hard
@@ -77,13 +72,13 @@ class ModeSelector:
         return speed_ok and gentle and battery_ok and flat_road and light
     
     def _prefer_engine(self, state):
-        """Check if engine is better right now"""
+        
         # Cruising on highway
         highway = state.speed > self.HIGHWAY_SPEED and state.throttle_position < 60
         return highway
     
     def _need_max_power(self, state):
-        """Check if we need both engine and motor"""
+        
         # Flooring the gas pedal
         full_throttle = state.throttle_position > 70
         # Climbing a steep hill
